@@ -76,9 +76,24 @@ defTest = (settings) ->
       if item.method == 'err'
         name = item.args[0] + ": " + item.args[1]
 
-      it name, (done) -> callb item, done
+      it name, (done) ->
+        blocker () ->
+          callb item, done
 
   obj
+
+triggered = false
+blocks = []
+blocker = (f) ->
+  if triggered
+    f()
+  else
+    blocks.push(f)
+
+exports.trigger = () ->
+  blocks.forEach (b) -> b()
+  blocks = []
+  triggered = true
 
 exports.query = (title, data) ->
   x = null
