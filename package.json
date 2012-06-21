@@ -2,7 +2,7 @@
   "name": "trester",
   "description": "RESTful tester",
   "main": "./build/trester.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Jakob Mattsson <jakob.mattsson@gmail.com> (jakobmattsson.se)",
   "engines": {
     "node": ">=0.6.0"
