@@ -1,7 +1,7 @@
 should = require 'should'
 request = require 'request'
 
-defTest = (settings) ->
+defTest = (settings, testDesc) ->
   obj = {}
   conf = []
   state = {}
@@ -49,9 +49,15 @@ defTest = (settings) ->
       if item.method == 'auth'
         if item.args.length == 0
           authHeader = null
+          callback()
+        else if item.args.length == 1
+          f = item.args[0]
+          f (username, password) ->
+            authHeader = "Basic " + new Buffer(username + ":" + password).toString('base64')
+            callback()
         else
           authHeader = "Basic " + new Buffer(item.args[0] + ":" + item.args[1]).toString('base64')
-        callback()
+          callback()
 
       if item.method == 'res'
         if lastError
@@ -76,7 +82,7 @@ defTest = (settings) ->
       if item.method == 'err'
         name = item.args[0] + ": " + item.args[1]
 
-      it name, (done) ->
+      it testDesc + ": " + name, (done) ->
         blocker () ->
           callb item, done
 
@@ -98,5 +104,5 @@ exports.trigger = () ->
 exports.query = (title, data) ->
   x = null
   describe title, () ->
-    x = defTest data
+    x = defTest data, title
   x
